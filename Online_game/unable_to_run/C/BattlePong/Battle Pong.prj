@@ -1,0 +1,22 @@
+<!DOCTYPE kate_project>
+<kate_project version="1" name="project_name_here" >
+ <file path="/home/dana/Documents/CPP/battlepong/gamedefs.h" />
+ <file path="/home/dana/Documents/CPP/battlepong/randgen.h" />
+ <file path="/home/dana/Documents/CPP/battlepong/randgen.cpp" />
+ <file path="/home/dana/Documents/CPP/battlepong/player.cpp" />
+ <file path="/home/dana/Documents/CPP/battlepong/player.h" />
+ <file path="/home/dana/Documents/CPP/battlepong/Makefile" />
+ <file path="/home/dana/Documents/CPP/battlepong/init.h" />
+ <file path="/home/dana/Documents/CPP/battlepong/game.cpp" />
+ <file path="/home/dana/Documents/CPP/battlepong/menu.cpp" />
+ <file path="/home/dana/Documents/CPP/battlepong/ball.cpp" />
+ <file path="/home/dana/Documents/CPP/battlepong/init.cpp" />
+ <file path="/home/dana/Documents/CPP/battlepong/ball.h" />
+ <file path="/home/dana/Documents/CPP/battlepong/menu.h" />
+ <file path="/home/dana/Documents/CPP/battlepong/main.cpp" />
+ <file path="/home/dana/Documents/CPP/battlepong/game.h" />
+ <file path="/home/dana/Documents/CPP/battlepong/sound.cpp" />
+ <file path="/home/dana/Documents/CPP/battlepong/sound.h" />
+ <file path="/home/dana/Documents/CPP/battlepong/collide.cpp" />
+ <file path="/home/dana/Documents/CPP/battlepong/collide.h" />
+</kate_project>

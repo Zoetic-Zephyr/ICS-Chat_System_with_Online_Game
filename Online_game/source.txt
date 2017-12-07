@@ -1,0 +1,2 @@
+You will see this file in the folders at this level.
+It is used to indicate where I find the resources.

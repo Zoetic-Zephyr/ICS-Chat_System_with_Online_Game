@@ -1,0 +1,109 @@
+---------------
+- Battle Pong -
+---------------
+Dana Olson
+http://battlepong.sourceforge.net/
+
+Beta 3 Readme file
+
+Licensed under the GNU Public License
+Read LICENSE for more details.
+
+
+Making it run:
+--------------
+
+You've obviously extracted the archive and you are reading this
+file, so I'll skip that step.
+
+Next thing to do is to edit the file gamedefs.h.
+
+There is now keyboard support in Battle Pong. You have to define the keys
+at compile time, and the keyboard support works in addition to the game pad
+support, so you can play two players with no game pads, one game pad, or
+two game pads. If you wish to enable keyboard support, find the line that
+says ENABLE_KEYBOARD and set that to ENABLE_KEYBOARD 1. If you wish to
+disable keyboard support, set it to say ENABLE_KEYBOARD 0.
+
+You can then edit the keys that you would use for the players. The defaults
+are the preferred keys, but some people (laptop users in particular) may
+not have a keypad to use, so they would want to redefine the keys for
+player two.
+
+Next, you will have to decide which you would like to use, a hat or an axis on
+your game pad. If you want to use a hat, or on some game pads, the directional pad,
+set the line that says USE_HAT to 1. If you want to use an axis, set it to
+say USE_HAT 0.
+
+Next, find the line that says PADAXIS and set it to the hat number you would
+like to use, starting at 0, or the axis on the game pad you would like to use.
+
+Note that sometimes, the same game pad will use a particular piece of the pad
+as either a hat or an axis, depending on the operating system you are using,
+and what the driver is set up to use it as.
+
+For example: To use the directional pad of the Interact Hammerhead FX game pad
+under Linux, you would set USE_HAT to 0 and PADAXIS to 5. Under Windows, with
+the latest drivers from Interact, you would have to set USE_HAT to 1 and set
+PADAXIS to 0.
+
+If you are unsure, you can try the default settings of USE_HAT 0 and PADAXIS 1.
+This usually works for most game pads.
+
+If you don't have a game pad, you can just leave the default settings for USE_HAT
+and for PADAXIS.
+
+Now find the line that says WIN32_VERSION 0. If you are compiling under Windows,
+set this to say WIN32_VERSION 1.
+
+If the line ICEBOX_ONLY is 1, then change it to ICEBOX_ONLY 0.
+
+Next thing to do is to go into the snd directory and execute the getmusic.sh
+script:
+
+cd snd/
+sh getmusic.sh
+
+This will download two OGG files, which you need for the sound track. If
+you are using Windows, you'll have to get the OGG files yourself and
+rename them appropriately. Note that they will soon be available for download
+directly from our website.
+
+Alternately, you can use your own files, just so long as you create the
+proper symlinks in this directory.
+
+If you're using Windows, open up the Battle Pong project file in Visual C++
+and compile it like a normal program, otherwise, if you're in Linux, type
+cd .. to go back to the main directory.
+
+Type in make and hit enter to compile and run the game.
+
+If it fails, you're probably missing a library. You'll need SDL, SDL_ttf,
+SDL_image, and SDL_mixer, plus any libraries that they require. Look at
+http://www.libsdl.org/ for the necessary files.
+
+
+Controls:
+---------
+
+Navigate the menu using the game pad, and press button 1 to select your
+option. If you are using keyboard support, navigate up with the A key,
+and navigate down with the Z key. Make your selections with the X key.
+
+Use the game pad to move the player up and down. If you are using keyboard
+support, player one moves up with the A key, and moves down with the Z key.
+Player two moves up with the 4 on the keypad, and moves down with the 1 on
+the keypad by default.
+
+When the screen says "Faceoff!", press button two on the gamepad as rapidly as
+you can, so that you can win the faceoff. If keyboard support is enabled,
+player one should use the C key, and player two use the 3 on the keypad to
+do the faceoff.
+
+Eventually, button one will shoot freeze missiles, but they aren't in Battle
+Pong as of yet. With keyboard support enabled, player one would shoot with
+the X key, and player two would use the 2 on the keypad.
+
+To quit out of a game, press the last button on your gamepad, or just wait until
+you or your opponent hits 5 points. You can also press ESC on the keyboard,
+assuming you have keyboard support enabled.

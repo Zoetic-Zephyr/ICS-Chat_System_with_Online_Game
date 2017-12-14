@@ -17,7 +17,7 @@ class ClientSM:
         self.opponent = ''
         self.out_msg = ''
         self.s = s
-        self.playerOne = True
+        self.player = {}
 
     def set_state(self, state):
         self.state = state
@@ -60,10 +60,10 @@ class ClientSM:
         pygame.init()
 
         # Create an 800x600 sized screen
-        screen = pygame.display.set_mode([400, 600])
+        screen = pygame.display.set_mode([800, 600])
 
         # Set the title of the window
-        pygame.display.set_caption('Bottom line')
+        pygame.display.set_caption('Breakout')
 
         # Enable this to make the mouse disappear when over our window
         pygame.mouse.set_visible(0)
@@ -74,38 +74,29 @@ class ClientSM:
         # Create a surface we can draw on
         background = pygame.Surface(screen.get_size())
 
-        #Loop the background music
-        pygame.mixer.music.load('loop.ogg')
-        pygame.mixer.music.play(-1)
-
-
-        # Load the sound to be played
-        s_thump = pygame.mixer.Sound('thump.ogg')
-        '''
-        s_sidehit = pygame.mixer.Sound('sidehit.ogg')
-        s_power = pygame.mixer.Sound('power.ogg')
-        s_fire = pygame.mixer.Sound('fire.ogg')
-        '''
-
-
         # Create sprite lists
-        # blocks = pygame.sprite.Group()
+        blocks = pygame.sprite.Group()
         balls = pygame.sprite.Group()
         allsprites = pygame.sprite.Group()
 
         # Create the player paddle object
-        self.me = bs.Player()
-        self.opponent = bs.Player()
-        # self.playerNumber = -1 or 1;
-        allsprites.add(self.me)
-        allsprites.add(self.opponent)
+        selfins = bs.Player()
+        oppoins = bs.Player()
+        self.player[self.me] = selfins
+        self.player[self.opponent] = oppoins
+        allsprites.add(self.player[self.me])
+        allsprites.add(self.player[self.opponent])
 
         # Create the ball
-
-        ball = bs.Ball(self.playerOne)
+        ball = bs.Ball()
         allsprites.add(ball)
         balls.add(ball)
 
+        # The top of the block (y position)
+        top = 80
+
+        # Number of blocks to create
+        blockcount = 32
 
         # Clock to limit speed
         clock = pygame.time.Clock()
@@ -115,47 +106,15 @@ class ClientSM:
 
         # Exit the program?
         exit_program = False
+
         # Main program loop
         while not exit_program:
-            # print('me', self.me.rect.height, 'opponent', self.opponent.rect.height)
+
             # Limit to 30 fps
             clock.tick(30)
 
             # Clear the screen
-            screen.fill(bs.white)
-
-            # Construct the arena.
-            pygame.draw.line(screen, bs.black, (0, 300), (150, 300))
-            pygame.draw.circle(screen, bs.black, (200, 300), 10)
-            pygame.draw.circle(screen, bs.black, (200, 300), 15, 1)
-            pygame.draw.circle(screen, bs.black, (200, 300), 50, 1)
-            pygame.draw.line(screen, bs.black, (250, 300), (400, 300))
-            pygame.draw.rect(screen, bs.blue, (0, 570, 400, 30), 0)
-            pygame.draw.rect(screen, bs.red, (0, 0, 400, 30), 0)
-
-            health = str(ball.health)
-            text = font.render(health, True, bs.black)
-            textpos = text.get_rect(centerx=background.get_width() / 2)
-            textpos.top = 570
-            screen.blit(text, textpos)
-
-
-            '''
-            text = font.render("----------------------------------------", True, bs.black)
-            textpos = text.get_rect(centerx=background.get_width() / 2)
-            textpos.top = 300
-            screen.blit(text, textpos)
-            '''
-
-            '''
-            text = font.render("Instructions", True, bs.black)
-            textpos = text.get_rect(centerx=background.get_width() / 2)
-            textpos.top = 300
-            screen.blit(text, textpos)
-
-            textpos = text.get_rect(centerx=background.get_width() / 2)
-            '''
-            # pygame.draw.line(screen, bs.black, (0, 300), (400, 300), width=1)
+            screen.fill(bs.black)
 
             # Process the events in the game
             for event in pygame.event.get():
@@ -166,77 +125,33 @@ class ClientSM:
             # as the game is not over.
             if not game_over:
                 # Update the player and ball positions
-
+                if myrecv(self.s)[1] == M_GAMING:
+                    print(myrecv(self.s))
+                    (self.player[self.opponent]).set_x(myrecv(self.s)[1:])
                 #should then plot this position
-                self.me.update()
-                mysend(self.s, M_GAME + str(self.me.rect.x))
-                got = myrecv(self.s)[1:]
-                self.opponent.set_x(320 - int(got))
+                (self.player[self.me]).update()
+                mysend(self.s, M_GAME + str((self.player[self.me]).rect.x))
                 game_over = ball.update()
-
 
             # If we are done, print game over
             if game_over:
-                text = font.render("Game Over", True, bs.black)
+                text = font.render("Game Over", True, bs.white)
                 textpos = text.get_rect(centerx=background.get_width() / 2)
                 textpos.top = 300
                 screen.blit(text, textpos)
-            '''
+
             # See if the ball hits the player paddle
             #here I delete the player argument
-            if pygame.sprite.spritecollide(self.me, balls, False):
+            if pygame.sprite.spritecollide(balls, False):
                 # The 'diff' lets you try to bounce the ball left or right
                 # depending where on the paddle you hit it
-                diff1 = (self.me.rect.x + self.me.width / 2) - (ball.rect.x + ball.width / 2)
-                print('diff1', diff1)
+                diff = ((self.player[self.me]).rect.x + (self.player[self.me]).width / 2) - (ball.rect.x + ball.width / 2)
 
                 # Set the ball's y position in case
                 # we hit the ball on the edge of the paddle
-                ball.rect.y = screen.get_height() - self.me.rect.height - ball.rect.height - 1
-                ball.bounce(diff1)
-            '''
-            # See if the ball hits the player paddle
-            #here I delete the player argument
-            if ball.x >= self.me.rect.x and ball.x <= self.me.rect.x + self.me.rect.width:
-                # if ball.y + ball.height / 2 >= self.me.rect.y:
-                if ball.y + ball.height / 2 >= self.me.rect.y - 6:
-                    s_thump.play()
-                    # The 'diff' lets you try to bounce the ball left or right
-                    # depending where on the paddle you hit it
-                    diff1 = (self.me.rect.x + self.me.width / 2) - (ball.rect.x + ball.width / 2)
-                    print('diff1', diff1)
+                ball.rect.y = screen.get_height() - (self.player[self.me]).rect.height - ball.rect.height - 1
+                ball.bounce(diff)
 
-                    # Set the ball's y position in case
-                    # we hit the ball on the edge of the paddle
-                    ball.rect.y = screen.get_height() - self.me.rect.height - ball.rect.height - 5 - 30
-                    ball.bounce(diff1)
-
-            '''
-            if pygame.sprite.spritecollide(self.opponent, balls, False):
-                # The 'diff' lets you try to bounce the ball left or right
-                # depending where on the paddle you hit it
-                diff2 = (ball.rect.x + ball.width / 2) - (self.opponent.rect.x + self.opponent.width / 2) - 2
-                print('diff2', diff2)
-                # Set the ball's y position in case
-                # we hit the ball on the edge of the paddle
-                # ball.rect.y = screen.get_height() - self.opponent.rect.height - ball.rect.height - 1
-                ball.rect.y = self.opponent.rect.height + 1
-                ball.bounce(diff2)
-            '''
-            if ball.x >= self.opponent.rect.x and ball.x <= self.opponent.rect.x + self.opponent.rect.width:
-                # if ball.y - ball.height / 2 <= self.opponent.rect.y:
-                if ball.y - ball.height / 2 <= self.opponent.rect.y + 6:
-                    s_thump.play()
-                    # The 'diff' lets you try to bounce the ball left or right
-                    # depending where on the paddle you hit it
-                    diff2 = (ball.rect.x + ball.width / 2) - (self.opponent.rect.x + self.opponent.width / 2) + 1
-                    print('diff2', diff2)
-
-                    # Set the ball's y position in case
-                    # we hit the ball on the edge of the paddle
-                    ball.rect.y = self.opponent.rect.height + 5 + 30
-                    ball.bounce(diff2)
-            '''
             # Check for collisions between the ball and the blocks
             deadblocks = pygame.sprite.spritecollide(ball, blocks, True)
 
@@ -247,15 +162,12 @@ class ClientSM:
                 # Game ends if all the blocks are gone
                 if len(blocks) == 0:
                     game_over = True
-            '''
+
             # Draw Everything
             allsprites.draw(screen)
 
             # Flip the screen and show what we've drawn
             pygame.display.flip()
-
-            pressed = pygame.key.get_pressed()
-            exit_program = pressed[pygame.K_q]
 
         pygame.quit()
 
@@ -331,6 +243,13 @@ class ClientSM:
                     self.out_msg += '\n'
                     self.state = S_CHATTING
 
+                elif peer_code == M_GAME:
+                    self.opponent = peer_msg
+                    self.out_msg += 'Game challenge from {0} \n'.format(self.opponent)
+                    self.out_msg += 'Have fun with {0}. Fuck him! \n\n'.format(self.opponent)
+                    self.out_msg += '-' * 35
+                    self.out_msg += '\n'
+                    self.state = S_GAMING
 #==============================================================================
 # Start chatting, 'bye' for quit
 # This is event handling instate "S_CHATTING"
@@ -340,10 +259,8 @@ class ClientSM:
                 if my_msg[0:2] == '#g':
                     self.opponent = my_msg.split()[-1]
                     mysend(self.s, M_EXCHANGE + M_GAME + self.opponent)
-                    self.playerOne = True
                     self.state = S_GAMING
                 else:
-                    print('my_msg', my_msg)
                     mysend(self.s, M_EXCHANGE + "[" + self.me + "] " + my_msg)
                     if my_msg == 'bye':
                         self.disconnect()
@@ -354,17 +271,8 @@ class ClientSM:
                 # when peer_msg is "bye", peer_code will be M_DISCONNECT
                 if peer_code == M_CONNECT:
                     self.out_msg += ('{0} joined'.format(peer_msg))
-                elif peer_code == M_GAME:
-                    '''
-                    self.opponent = peer_msg
-                    self.out_msg += 'Game challenge from {0} \n'.format(self.opponent)
-                    self.out_msg += 'Have fun with {0}. Fuck him! \n\n'.format(self.opponent)
-                    self.out_msg += '-' * 35
-                    self.out_msg += '\n'
-                    '''
-                    self.playerOne = False
-                    self.state = S_GAMING
-                    print('I am in game mode')
+                elif peer_code == M_GAMING:
+                    pass
                 else:
                     self.out_msg += peer_msg
 
@@ -378,10 +286,8 @@ class ClientSM:
             if self.state == S_LOGGEDIN:
                 self.out_msg += menu
 
-            elif self.state == S_GAMING:
-                print('now we run game')
-                self.run_game_client()
-                self.state = S_CHATTING
+        elif self.state == S_GAMING:
+            self.run_game_client()
 
 #==============================================================================
 # invalid state                       
